@@ -1,0 +1,6 @@
+metro_name,metro_code,total_population,median_household_income,median_home_value,bachelors_degree,public_transportation,unemployment_rate,unemployment_change_1yr,economic_diversity_score,top_industry_share,employment_stability_score,diversity_score,income_resilience_score,human_capital_score,resilience_score,resilience_category
+"New York-Newark-Jersey City, NY-NJ-PA",35620,20011812,86445,483500,3390871,2656256,5.2,-0.5,52,0.1699999999999999,50.0,52,100.0,100.0,73.0,High
+"Los Angeles-Long Beach-Anaheim, CA",31080,13202558,81652,671700,2115083,257318,4.2,-0.5,74,0.19,100.0,74,65.5,69.3,78.7,High
+"Chicago-Naperville-Elgin, IL-IN-WI",16980,9607711,78790,258500,1560941,472764,4.2,0.5,57,0.22,100.0,57,44.9,76.8,70.8,High
+"Dallas-Fort Worth-Arlington, TX",19100,7543340,76916,255600,1166891,38949,6.2,-0.5,68,0.3299999999999999,0.0,68,31.4,51.0,35.1,Very Low
+"Houston-The Woodlands-Sugar Land, TX",26420,7048954,72551,221400,982109,60836,6.2,-0.5,68,0.3299999999999999,0.0,68,0.0,0.0,17.0,Very Low

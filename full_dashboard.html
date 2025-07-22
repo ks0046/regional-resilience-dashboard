@@ -1,0 +1,711 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regional Economic Resilience Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            color: #1a202c;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: 600;
+            border: none;
+            background: none;
+        }
+        
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-tab.active {
+            background: rgba(255, 255, 255, 0.3);
+            color: #1a202c;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .chart-container {
+            height: 500px;
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .comparison-selector {
+            margin: 20px 0;
+        }
+        
+        .metro-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .metro-checkbox {
+            display: flex;
+            align-items: center;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .metro-checkbox:hover {
+            background: rgba(102, 126, 234, 0.2);
+        }
+        
+        .metro-checkbox input {
+            margin-right: 8px;
+        }
+        
+        .policy-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .query-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .query-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        
+        .query-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .custom-query {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .submit-query {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-query:hover {
+            background: #3182ce;
+        }
+        
+        .policy-response {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .policy-response.show {
+            display: block;
+        }
+        
+        .sources {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .source-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        
+        .high { background: #d4edda !important; }
+        .moderate { background: #fff3cd !important; }
+        .low { background: #f8d7da !important; }
+        .very-high { background: #c3e6cb !important; }
+        .very-low { background: #f5c6cb !important; }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .header h1 { font-size: 2rem; }
+            .nav-tab { padding: 12px 15px; }
+            .metrics-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+            .query-buttons { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏙️ Regional Economic Resilience Dashboard</h1>
+            <p>Comprehensive analysis of economic resilience across major U.S. metropolitan areas</p>
+            <p><strong>Data Sources:</strong> U.S. Census Bureau, Bureau of Labor Statistics | <strong>Analysis:</strong> 5 Metropolitan Areas</p>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('overview')">📊 Regional Overview</button>
+            <button class="nav-tab" onclick="showTab('comparison')">🔍 Comparative Analysis</button>
+            <button class="nav-tab" onclick="showTab('policy')">🎯 Policy Insights</button>
+        </div>
+        
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="card">
+                <h2>📊 Dashboard Overview</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">5</div>
+                        <div class="metric-label">Metropolitan Areas</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">54.9</div>
+                        <div class="metric-label">Average Resilience Score</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">78.7</div>
+                        <div class="metric-label">Highest Score</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">17.0</div>
+                        <div class="metric-label">Lowest Score</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>🏆 Top Performing Metropolitan Areas</h3>
+                <div id="overview-chart" class="chart-container"></div>
+            </div>
+            
+            <div class="card">
+                <h3>📈 Resilience Score Distribution</h3>
+                <div id="distribution-chart" class="chart-container"></div>
+            </div>
+            
+            <div class="card">
+                <h3>🎯 Selected Metro Analysis</h3>
+                <select id="metro-selector" onchange="updateMetroAnalysis()" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd; margin: 10px 0;">
+                    <option value="New York-Newark-Jersey City, NY-NJ-PA">New York-Newark-Jersey City, NY-NJ-PA (Score: 73.0)</option>
+<option value="Los Angeles-Long Beach-Anaheim, CA">Los Angeles-Long Beach-Anaheim, CA (Score: 78.7)</option>
+<option value="Chicago-Naperville-Elgin, IL-IN-WI">Chicago-Naperville-Elgin, IL-IN-WI (Score: 70.8)</option>
+<option value="Dallas-Fort Worth-Arlington, TX">Dallas-Fort Worth-Arlington, TX (Score: 35.1)</option>
+<option value="Houston-The Woodlands-Sugar Land, TX">Houston-The Woodlands-Sugar Land, TX (Score: 17.0)</option>
+
+                </select>
+                <div id="metro-details">
+                    
+    <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+        <div style="text-align: center; padding: 15px; background: #f8fafc; border-radius: 8px;">
+            <div style="font-size: 1.5rem; font-weight: bold; color: #667eea;">73.0</div>
+            <div style="font-size: 0.9rem;">Resilience Score</div>
+        </div>
+        <div style="text-align: center; padding: 15px; background: #f8fafc; border-radius: 8px;">
+            <div style="font-size: 1.2rem; font-weight: bold; color: #667eea;">High</div>
+            <div style="font-size: 0.9rem;">Category</div>
+        </div>
+        <div style="text-align: center; padding: 15px; background: #f8fafc; border-radius: 8px;">
+            <div style="font-size: 1.2rem; font-weight: bold; color: #667eea;">20,011,812</div>
+            <div style="font-size: 0.9rem;">Population</div>
+        </div>
+        <div style="text-align: center; padding: 15px; background: #f8fafc; border-radius: 8px;">
+            <div style="font-size: 1.2rem; font-weight: bold; color: #667eea;">$86,445</div>
+            <div style="font-size: 0.9rem;">Median Income</div>
+        </div>
+    </div>
+    
+                </div>
+                <div id="radar-chart" class="chart-container"></div>
+            </div>
+        </div>
+        
+        <!-- Comparison Tab -->
+        <div id="comparison" class="tab-content">
+            <div class="card">
+                <h2>🔍 Comparative Analysis</h2>
+                <div class="comparison-selector">
+                    <h3>Select Metropolitan Areas to Compare:</h3>
+                    <div class="metro-selector">
+                        
+        <div class="metro-checkbox">
+            <input type="checkbox" name="metro-compare" value="New York-Newark-Jersey City, NY-NJ-PA" id="metro_35620">
+            <label for="metro_35620">New York-Newark-Jersey City, NY-NJ-PA (73.0)</label>
+        </div>
+        
+        <div class="metro-checkbox">
+            <input type="checkbox" name="metro-compare" value="Los Angeles-Long Beach-Anaheim, CA" id="metro_31080">
+            <label for="metro_31080">Los Angeles-Long Beach-Anaheim, CA (78.7)</label>
+        </div>
+        
+        <div class="metro-checkbox">
+            <input type="checkbox" name="metro-compare" value="Chicago-Naperville-Elgin, IL-IN-WI" id="metro_16980">
+            <label for="metro_16980">Chicago-Naperville-Elgin, IL-IN-WI (70.8)</label>
+        </div>
+        
+        <div class="metro-checkbox">
+            <input type="checkbox" name="metro-compare" value="Dallas-Fort Worth-Arlington, TX" id="metro_19100">
+            <label for="metro_19100">Dallas-Fort Worth-Arlington, TX (35.1)</label>
+        </div>
+        
+        <div class="metro-checkbox">
+            <input type="checkbox" name="metro-compare" value="Houston-The Woodlands-Sugar Land, TX" id="metro_26420">
+            <label for="metro_26420">Houston-The Woodlands-Sugar Land, TX (17.0)</label>
+        </div>
+        
+                    </div>
+                    <button onclick="updateComparison()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 10px 0;">Update Comparison</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>📊 Resilience Score Comparison</h3>
+                <div id="comparison-chart" class="chart-container"></div>
+            </div>
+            
+            <div class="card">
+                <h3>🎯 Component Analysis</h3>
+                <div id="component-chart" class="chart-container"></div>
+            </div>
+            
+            <div class="card">
+                <h3>📋 Detailed Comparison Table</h3>
+                <div id="comparison-table"></div>
+            </div>
+        </div>
+        
+        <!-- Policy Tab -->
+        <div id="policy" class="tab-content">
+            <div class="policy-section">
+                <h2>🎯 AI-Powered Policy Insights</h2>
+                <p>Explore evidence-based policy recommendations for regional economic resilience. Click on sample questions or ask your own.</p>
+                
+                <h3>📋 Sample Policy Questions</h3>
+                <div class="query-buttons">
+                    <button class="query-button" onclick="submitSampleQuery(`What strategies promote economic diversification in regions?`)">What strategies promote economic diversification in regions?</button>
+<button class="query-button" onclick="submitSampleQuery(`How can manufacturing contribute to regional resilience?`)">How can manufacturing contribute to regional resilience?</button>
+<button class="query-button" onclick="submitSampleQuery(`What are the main challenges for rural economic development?`)">What are the main challenges for rural economic development?</button>
+<button class="query-button" onclick="submitSampleQuery(`How do urban areas build economic resilience?`)">How do urban areas build economic resilience?</button>
+<button class="query-button" onclick="submitSampleQuery(`What role does workforce development play in regional resilience?`)">What role does workforce development play in regional resilience?</button>
+<button class="query-button" onclick="submitSampleQuery(`How can regions improve access to capital for small businesses?`)">How can regions improve access to capital for small businesses?</button>
+<button class="query-button" onclick="submitSampleQuery(`What infrastructure investments support economic competitiveness?`)">What infrastructure investments support economic competitiveness?</button>
+
+                </div>
+                
+                <h3>💭 Ask Your Own Question</h3>
+                <textarea id="custom-query" class="custom-query" placeholder="e.g., What infrastructure investments best support regional economic resilience?"></textarea>
+                <button onclick="submitCustomQuery()" class="submit-query">Get Policy Insights</button>
+                
+                <div id="policy-response" class="policy-response">
+                    <div id="policy-loading" class="loading" style="display: none;">
+                        <p>🤖 Analyzing policy documents and generating insights...</p>
+                    </div>
+                    <div id="policy-content"></div>
+                </div>
+                
+                <div class="card" style="margin-top: 30px; background: rgba(255,255,255,0.95); color: #1a202c;">
+                    <h3>📚 Available Policy Documents</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">📄 EDA Regional Development Strategy</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">📄 Federal Reserve Regional Economic Outlook</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">📄 Manufacturing Resilience Policy Framework</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee;">📄 Rural Economic Development Strategies</li>
+                        <li style="padding: 8px 0;">📄 Urban Economic Resilience Guidelines</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart data and configurations
+        
+        const overviewChartData = {"data": [{"x": [78.7, 73.0, 70.8, 35.1, 17.0], "y": ["Los Angeles-Long Beach-Anaheim, CA", "New York-Newark-Jersey City, NY-NJ-PA", "Chicago-Naperville-Elgin, IL-IN-WI", "Dallas-Fort Worth-Arlington, TX", "Houston-The Woodlands-Sugar Land, TX"], "type": "bar", "orientation": "h", "marker": {"color": "#667eea"}}], "layout": {"title": "Top Metropolitan Areas by Resilience Score", "xaxis": {"title": "Resilience Score"}, "yaxis": {"title": "Metropolitan Area"}, "margin": {"l": 300, "r": 50, "t": 80, "b": 50}}};
+        const distributionChartData = {"data": [{"labels": ["High", "Very Low"], "values": [3, 2], "type": "pie", "marker": {"colors": ["#2E8B57", "#32CD32", "#FFD700", "#FF8C00", "#DC143C"]}}], "layout": {"title": "Distribution by Resilience Category"}};
+    
+        
+        // Policy responses data
+        const policyResponses = {
+  "What strategies promote economic diversification in regions?": {
+    "response": "Based on the policy documents provided, several strategies can promote economic diversification in regions:\n\n1. Support for Emerging Industries and Innovation Clusters: Investing in emerging industries and fostering innovation clusters can help regions diversify their economic base. The EDA's focus on supporting these sectors aligns with promoting economic diversification.\n\n2. Development of Entrepreneurship Ecosystems: Creating a supportive environment for entrepreneurs can encourage the growth of new businesses in diverse sectors. Policies that facilitate access to funding, mentorship, and networking opportunities can foster entrepreneurship and contribute to economic diversification.\n\n3. Investment in Workforce Development Aligned with New Economic Opportunities: Providing training programs and educational initiatives that align with the skills needed in emerging industries can help regions transition to more diverse economic activities. This can enhance the adaptability of the local workforce and attract new businesses to the region.\n\n4. Mixed-Use Development Supporting Multiple Industries: The Urban Resilience Framework highlights the importance of mixed-use development in urban areas to accommodate diverse industries. This approach can create synergies between different sectors and foster economic diversification.\n\n5. Innovation Districts Linking Research Institutions and Industry: By creating innovation districts that connect research institutions with industry players, regions can stimulate collaboration and knowledge exchange across different sectors. This can drive innovation and support the development of new economic activities.\n\n6. Small Business Corridors and Entrepreneurship Zones: Establishing designated areas for small businesses and entrepreneurs can encourage the growth of diverse enterprises. Providing targeted support and resources within these zones can help diversify the regional economy.\n\nBy implementing these strategies and adopting a comprehensive approach that addresses economic diversification through investments in emerging industries, entrepreneurship ecosystems, and workforce development aligned with new opportunities, regions can enhance their economic resilience and competitiveness.",
+    "sources": [
+      "Eda Regional Development Strategy",
+      "Fed Regional Economic Outlook",
+      "Urban Resilience Framework"
+    ]
+  },
+  "How can manufacturing contribute to regional resilience?": {
+    "response": "Manufacturing plays a crucial role in regional economic resilience by providing stable employment, supporting supply chain networks, and enhancing economic security. Based on the policy documents provided, here are some practical recommendations on how manufacturing can contribute to regional resilience:\n\n1. **Supply Chain Resilience**: Implement strategies to reduce dependence on single suppliers or geographic regions by developing domestic capabilities for critical materials and components. This can be achieved by investing in supply chain visibility and risk management systems as mentioned in the Manufacturing Resilience Policy.\n\n2. **Advanced Manufacturing Technologies**: Embrace advanced manufacturing technologies such as automation, robotics, digital manufacturing, and additive manufacturing to improve productivity and competitiveness. These technologies can enhance efficiency, flexibility, and innovation in manufacturing processes, making regions more resilient to economic disruptions.\n\n3. **Workforce Development**: Strengthen workforce development initiatives to ensure a skilled labor force capable of adapting to technological advancements in manufacturing. This includes investing in training programs, apprenticeships, and educational partnerships to align workforce skills with industry needs, as highlighted in the Manufacturing Resilience Policy.\n\n4. **Economic Diversification**: Promote economic diversification within manufacturing sectors to reduce vulnerability to economic shocks. Supporting emerging industries, innovation clusters, and entrepreneurship ecosystems, as advocated by the EDA Regional Development Strategy, can help regions expand their manufacturing base and create new opportunities for growth.\n\n5. **Infrastructure Development**: Invest in critical infrastructure such as transportation, energy, and digital connectivity to enhance the competitiveness and resilience of manufacturing sectors. Strong infrastructure supports efficient logistics, access to markets, and overall economic development, as emphasized in the EDA Regional Development Strategy.\n\nBy implementing these recommendations, regions can leverage the strength of their manufacturing sectors to build economic resilience, foster innovation, and create sustainable growth opportunities. Collaborative efforts between policymakers, businesses, and educational institutions are essential to ensure the long-term success of manufacturing as a driver of regional economic resilience.",
+    "sources": [
+      "Manufacturing Resilience Policy",
+      "Fed Regional Economic Outlook",
+      "Eda Regional Development Strategy"
+    ]
+  }
+};
+        
+        // Tab switching functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            const navTabs = document.querySelectorAll('.nav-tab');
+            navTabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Initialize charts for active tab
+            if (tabName === 'overview') {
+                initializeOverviewCharts();
+            } else if (tabName === 'comparison') {
+                updateComparison();
+            }
+        }
+        
+        // Initialize overview charts
+        function initializeOverviewCharts() {
+            Plotly.newPlot('overview-chart', overviewChartData.data, overviewChartData.layout, {responsive: true});
+            Plotly.newPlot('distribution-chart', distributionChartData.data, distributionChartData.layout, {responsive: true});
+            updateMetroAnalysis();
+        }
+        
+        // Metro analysis update
+        function updateMetroAnalysis() {
+            const selector = document.getElementById('metro-selector');
+            const selectedIndex = selector.selectedIndex;
+            const metroData = [{"metro_name": "New York-Newark-Jersey City, NY-NJ-PA", "metro_code": 35620, "total_population": 20011812, "median_household_income": 86445, "median_home_value": 483500, "bachelors_degree": 3390871, "public_transportation": 2656256, "unemployment_rate": 5.2, "unemployment_change_1yr": -0.5, "economic_diversity_score": 52, "top_industry_share": 0.1699999999999999, "employment_stability_score": 50.0, "diversity_score": 52, "income_resilience_score": 100.0, "human_capital_score": 100.0, "resilience_score": 73.0, "resilience_category": "High"}, {"metro_name": "Los Angeles-Long Beach-Anaheim, CA", "metro_code": 31080, "total_population": 13202558, "median_household_income": 81652, "median_home_value": 671700, "bachelors_degree": 2115083, "public_transportation": 257318, "unemployment_rate": 4.2, "unemployment_change_1yr": -0.5, "economic_diversity_score": 74, "top_industry_share": 0.19, "employment_stability_score": 100.0, "diversity_score": 74, "income_resilience_score": 65.5, "human_capital_score": 69.3, "resilience_score": 78.7, "resilience_category": "High"}, {"metro_name": "Chicago-Naperville-Elgin, IL-IN-WI", "metro_code": 16980, "total_population": 9607711, "median_household_income": 78790, "median_home_value": 258500, "bachelors_degree": 1560941, "public_transportation": 472764, "unemployment_rate": 4.2, "unemployment_change_1yr": 0.5, "economic_diversity_score": 57, "top_industry_share": 0.22, "employment_stability_score": 100.0, "diversity_score": 57, "income_resilience_score": 44.9, "human_capital_score": 76.8, "resilience_score": 70.8, "resilience_category": "High"}, {"metro_name": "Dallas-Fort Worth-Arlington, TX", "metro_code": 19100, "total_population": 7543340, "median_household_income": 76916, "median_home_value": 255600, "bachelors_degree": 1166891, "public_transportation": 38949, "unemployment_rate": 6.2, "unemployment_change_1yr": -0.5, "economic_diversity_score": 68, "top_industry_share": 0.3299999999999999, "employment_stability_score": 0.0, "diversity_score": 68, "income_resilience_score": 31.4, "human_capital_score": 51.0, "resilience_score": 35.1, "resilience_category": "Very Low"}, {"metro_name": "Houston-The Woodlands-Sugar Land, TX", "metro_code": 26420, "total_population": 7048954, "median_household_income": 72551, "median_home_value": 221400, "bachelors_degree": 982109, "public_transportation": 60836, "unemployment_rate": 6.2, "unemployment_change_1yr": -0.5, "economic_diversity_score": 68, "top_industry_share": 0.3299999999999999, "employment_stability_score": 0.0, "diversity_score": 68, "income_resilience_score": 0.0, "human_capital_score": 0.0, "resilience_score": 17.0, "resilience_category": "Very Low"}];
+            const selectedMetro = metroData[selectedIndex];
+            
+            // Update details
+            document.getElementById('metro-details').innerHTML = generateMetroDetailsHTML(selectedMetro);
+            
+            // Update radar chart
+            const radarData = {
+                data: [{
+                    type: 'scatterpolar',
+                    r: [
+                        parseFloat(selectedMetro.employment_stability_score) || 0,
+                        parseFloat(selectedMetro.diversity_score) || 0,
+                        parseFloat(selectedMetro.income_resilience_score) || 0,
+                        parseFloat(selectedMetro.human_capital_score) || 0
+                    ],
+                    theta: ['Employment Stability', 'Economic Diversity', 'Income Resilience', 'Human Capital'],
+                    fill: 'toself',
+                    name: selectedMetro.metro_name,
+                    line: {color: '#667eea'},
+                    marker: {color: '#667eea'}
+                }],
+                layout: {
+                    polar: {
+                        radialaxis: {
+                            visible: true,
+                            range: [0, 100],
+                            ticksuffix: '%'
+                        }
+                    },
+                    showlegend: false,
+                    title: 'Resilience Components: ' + selectedMetro.metro_name,
+                    font: {size: 12}
+                }
+            };
+            
+            Plotly.newPlot('radar-chart', radarData.data, radarData.layout, {responsive: true});
+        }
+        
+        // Comparison functionality
+        function updateComparison() {
+            const checkboxes = document.querySelectorAll('input[name="metro-compare"]:checked');
+            const selectedMetros = Array.from(checkboxes).map(cb => cb.value);
+            
+            if (selectedMetros.length < 2) {
+                document.getElementById('comparison-chart').innerHTML = '<p style="text-align: center; padding: 50px;">Please select at least 2 metropolitan areas for comparison.</p>';
+                return;
+            }
+            
+            const allData = [{"metro_name": "New York-Newark-Jersey City, NY-NJ-PA", "metro_code": 35620, "total_population": 20011812, "median_household_income": 86445, "median_home_value": 483500, "bachelors_degree": 3390871, "public_transportation": 2656256, "unemployment_rate": 5.2, "unemployment_change_1yr": -0.5, "economic_diversity_score": 52, "top_industry_share": 0.1699999999999999, "employment_stability_score": 50.0, "diversity_score": 52, "income_resilience_score": 100.0, "human_capital_score": 100.0, "resilience_score": 73.0, "resilience_category": "High"}, {"metro_name": "Los Angeles-Long Beach-Anaheim, CA", "metro_code": 31080, "total_population": 13202558, "median_household_income": 81652, "median_home_value": 671700, "bachelors_degree": 2115083, "public_transportation": 257318, "unemployment_rate": 4.2, "unemployment_change_1yr": -0.5, "economic_diversity_score": 74, "top_industry_share": 0.19, "employment_stability_score": 100.0, "diversity_score": 74, "income_resilience_score": 65.5, "human_capital_score": 69.3, "resilience_score": 78.7, "resilience_category": "High"}, {"metro_name": "Chicago-Naperville-Elgin, IL-IN-WI", "metro_code": 16980, "total_population": 9607711, "median_household_income": 78790, "median_home_value": 258500, "bachelors_degree": 1560941, "public_transportation": 472764, "unemployment_rate": 4.2, "unemployment_change_1yr": 0.5, "economic_diversity_score": 57, "top_industry_share": 0.22, "employment_stability_score": 100.0, "diversity_score": 57, "income_resilience_score": 44.9, "human_capital_score": 76.8, "resilience_score": 70.8, "resilience_category": "High"}, {"metro_name": "Dallas-Fort Worth-Arlington, TX", "metro_code": 19100, "total_population": 7543340, "median_household_income": 76916, "median_home_value": 255600, "bachelors_degree": 1166891, "public_transportation": 38949, "unemployment_rate": 6.2, "unemployment_change_1yr": -0.5, "economic_diversity_score": 68, "top_industry_share": 0.3299999999999999, "employment_stability_score": 0.0, "diversity_score": 68, "income_resilience_score": 31.4, "human_capital_score": 51.0, "resilience_score": 35.1, "resilience_category": "Very Low"}, {"metro_name": "Houston-The Woodlands-Sugar Land, TX", "metro_code": 26420, "total_population": 7048954, "median_household_income": 72551, "median_home_value": 221400, "bachelors_degree": 982109, "public_transportation": 60836, "unemployment_rate": 6.2, "unemployment_change_1yr": -0.5, "economic_diversity_score": 68, "top_industry_share": 0.3299999999999999, "employment_stability_score": 0.0, "diversity_score": 68, "income_resilience_score": 0.0, "human_capital_score": 0.0, "resilience_score": 17.0, "resilience_category": "Very Low"}];
+            const compareData = allData.filter(metro => selectedMetros.includes(metro.metro_name));
+            
+            // Comparison bar chart
+            const comparisonChart = {
+                data: [{
+                    x: compareData.map(d => d.resilience_score),
+                    y: compareData.map(d => d.metro_name),
+                    type: 'bar',
+                    orientation: 'h',
+                    marker: {color: '#667eea'}
+                }],
+                layout: {
+                    title: 'Resilience Score Comparison',
+                    xaxis: {title: 'Resilience Score'},
+                    yaxis: {title: 'Metropolitan Area'},
+                    margin: {l: 300}
+                }
+            };
+            
+            Plotly.newPlot('comparison-chart', comparisonChart.data, comparisonChart.layout, {responsive: true});
+            
+            // Component comparison
+            const components = ['employment_stability_score', 'diversity_score', 'income_resilience_score', 'human_capital_score'];
+            const componentNames = ['Employment Stability', 'Economic Diversity', 'Income Resilience', 'Human Capital'];
+            
+            const componentData = compareData.map(metro => ({
+                x: componentNames,
+                y: components.map(comp => metro[comp] || 0),
+                name: metro.metro_name,
+                type: 'bar'
+            }));
+            
+            const componentChart = {
+                data: componentData,
+                layout: {
+                    title: 'Component Score Comparison',
+                    barmode: 'group',
+                    xaxis: {title: 'Component'},
+                    yaxis: {title: 'Score', range: [0, 100]},
+                    margin: {l: 50, r: 50, t: 80, b: 80}
+                }
+            };
+            
+            Plotly.newPlot('component-chart', componentChart.data, componentChart.layout, {responsive: true});
+            
+            // Generate comparison table
+            let tableHTML = '<table><thead><tr><th>Metro Area</th><th>Resilience Score</th><th>Category</th></tr></thead><tbody>';
+            compareData.forEach(metro => {
+                const categoryClass = metro.resilience_category.toLowerCase().replace(/\s+/g, '-');
+                tableHTML += `<tr class="${categoryClass}"><td>${metro.metro_name}</td><td>${metro.resilience_score}</td><td>${metro.resilience_category}</td></tr>`;
+            });
+            tableHTML += '</tbody></table>';
+            
+            document.getElementById('comparison-table').innerHTML = tableHTML;
+        }
+        
+        // Policy query functionality
+        function submitSampleQuery(query) {
+            const response = policyResponses[query];
+            if (response) {
+                showPolicyResponse(response.response, response.sources);
+            } else {
+                showPolicyResponse("This is a sample response for: " + query, ["Sample Policy Document"]);
+            }
+        }
+        
+        function submitCustomQuery() {
+            const query = document.getElementById('custom-query').value.trim();
+            if (!query) {
+                alert('Please enter a question.');
+                return;
+            }
+            
+            document.getElementById('policy-loading').style.display = 'block';
+            document.getElementById('policy-response').classList.add('show');
+            document.getElementById('policy-content').innerHTML = '';
+            
+            // Simulate API call
+            setTimeout(() => {
+                document.getElementById('policy-loading').style.display = 'none';
+                showPolicyResponse(
+                    "This is a simulated response to your custom query. In the full implementation, this would connect to the RAG system to provide evidence-based policy recommendations based on the query: " + query,
+                    ["Federal Economic Policy Framework", "Regional Development Guidelines"]
+                );
+            }, 2000);
+        }
+        
+        function showPolicyResponse(response, sources) {
+            let sourcesHTML = '';
+            if (sources && sources.length > 0) {
+                sourcesHTML = '<div class="sources"><h4>📚 Sources:</h4>' + 
+                    sources.map(source => `<div class="source-item">📄 ${source}</div>`).join('') + 
+                    '</div>';
+            }
+            
+            document.getElementById('policy-content').innerHTML = 
+                `<h4>🎯 Policy Analysis</h4><p>${response}</p>${sourcesHTML}`;
+            document.getElementById('policy-response').classList.add('show');
+        }
+        
+        function generateMetroDetailsHTML(metro) {
+            return `
+                <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+                    <div style="text-align: center; padding: 15px; background: #f8fafc; border-radius: 8px;">
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #667eea;">${metro.resilience_score}</div>
+                        <div style="font-size: 0.9rem;">Resilience Score</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #f8fafc; border-radius: 8px;">
+                        <div style="font-size: 1.2rem; font-weight: bold; color: #667eea;">${metro.resilience_category}</div>
+                        <div style="font-size: 0.9rem;">Category</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #f8fafc; border-radius: 8px;">
+                        <div style="font-size: 1.2rem; font-weight: bold; color: #667eea;">${metro.total_population ? parseInt(metro.total_population).toLocaleString() : 'N/A'}</div>
+                        <div style="font-size: 0.9rem;">Population</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #f8fafc; border-radius: 8px;">
+                        <div style="font-size: 1.2rem; font-weight: bold; color: #667eea;">${metro.median_household_income ? '$' + parseInt(metro.median_household_income).toLocaleString() : 'N/A'}</div>
+                        <div style="font-size: 0.9rem;">Median Income</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeOverviewCharts();
+            
+            // Initialize comparison with top 3
+            const topMetros = ["Los Angeles-Long Beach-Anaheim, CA", "New York-Newark-Jersey City, NY-NJ-PA", "Chicago-Naperville-Elgin, IL-IN-WI"];
+            topMetros.forEach(metro => {
+                const checkbox = document.querySelector(`input[value="${metro}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+            updateComparison();
+        });
+    </script>
+</body>
+</html>

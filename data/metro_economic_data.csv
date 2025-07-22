@@ -1,0 +1,21 @@
+metro_name,metro_code,total_population,median_household_income,median_home_value,bachelors_degree,public_transportation,unemployment_rate,unemployment_change_1yr,economic_diversity_score,top_industry_share
+"New York-Newark-Jersey City, NY-NJ-PA",35620,20011812,86445,483500,3390871,2656256,5.2,-0.5,52,0.16999999999999998
+"Los Angeles-Long Beach-Anaheim, CA",31080,13202558,81652,671700,2115083,257318,4.2,-0.5,74,0.19
+"Chicago-Naperville-Elgin, IL-IN-WI",16980,9607711,78790,258500,1560941,472764,4.2,0.5,57,0.22
+"Dallas-Fort Worth-Arlington, TX",19100,7543340,76916,255600,1166891,38949,6.2,-0.5,68,0.32999999999999996
+"Houston-The Woodlands-Sugar Land, TX",26420,7048954,72551,221400,982109,60836,6.2,-0.5,68,0.32999999999999996
+"Washington-Arlington-Alexandria, DC-VA-MD-WV",47900,6332069,111252,453100,1141528,339597,,,56,0.21
+"Philadelphia-Camden-Wilmington, PA-NJ-DE-MD",37980,6215222,79070,270400,1007674,238302,,,75,0.2
+"Miami-Fort Lauderdale-West Palm Beach, FL",33100,6105897,62870,317800,922225,76876,,,71,0.16
+"Atlanta-Sandy Springs-Roswell, GA",12060,6026734,75267,252100,1001718,70581,,,73,0.18
+"Boston-Cambridge-Newton, MA-NH",14460,4912030,99039,487600,927417,280012,,,80,0.25
+"Phoenix-Mesa-Scottsdale, AZ",38060,4787811,72211,294700,671994,32376,,,88,0.32999999999999996
+"San Francisco-Oakland-Hayward, CA",41860,4725584,118547,933300,1027414,330768,,,54,0.19
+"Riverside-San Bernardino-Ontario, CA",40140,4580402,73424,382000,435374,20304,,,57,0.22
+"Detroit-Warren-Dearborn, MI",19820,4382832,66878,193400,600663,24821,,,82,0.27
+"Seattle-Tacoma-Bellevue, WA",42660,3971125,97675,518000,758505,161679,,,72,0.16999999999999998
+"Minneapolis-St. Paul-Bloomington, MN-WI",33460,3659156,87397,287600,703265,70903,,,75,0.2
+"San Diego-Carlsbad, CA",41740,3296317,88240,627200,552537,39313,,,50,0.15
+"Tampa-St. Petersburg-Clearwater, FL",45300,3146074,61121,229400,473611,15015,,,50,0.15
+"Denver-Aurora-Lakewood, CO",19740,2936665,88512,443400,596677,52769,,,80,0.25
+"Baltimore-Columbia-Towson, MD",12580,2837237,87513,319500,447268,70728,,,67,0.32
